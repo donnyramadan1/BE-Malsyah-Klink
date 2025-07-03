@@ -18,39 +18,42 @@ namespace APIKlinik.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RoleDto>>> Get()
+        public async Task<ActionResult<ApiResponse<IEnumerable<RoleDto>>>> Get()
         {
             var roles = await _roleService.GetAllRolesAsync();
-            return Ok(roles);
+            return Ok(ApiResponse<IEnumerable<RoleDto>>.Success(roles));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<RoleDto>> Get(int id)
+        public async Task<ActionResult<ApiResponse<RoleDto>>> Get(int id)
         {
             var role = await _roleService.GetRoleByIdAsync(id);
-            if (role == null) return NotFound();
-            return Ok(role);
+            if (role == null)
+                return NotFound(ApiResponse<RoleDto>.NotFound("Role not found"));
+
+            return Ok(ApiResponse<RoleDto>.Success(role));
         }
 
         [HttpPost]
-        public async Task<ActionResult<RoleDto>> Post([FromBody] CreateRoleDto createRoleDto)
+        public async Task<ActionResult<ApiResponse<RoleDto>>> Post([FromBody] CreateRoleDto createRoleDto)
         {
             var role = await _roleService.AddRoleAsync(createRoleDto);
-            return CreatedAtAction(nameof(Get), new { id = role.Id }, role);
+            return CreatedAtAction(nameof(Get), new { id = role.Id },
+                ApiResponse<RoleDto>.Success("Role created successfully", role));
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] UpdateRoleDto updateRoleDto)
+        public async Task<ActionResult<ApiResponse<bool>>> Put(int id, [FromBody] UpdateRoleDto updateRoleDto)
         {
             await _roleService.UpdateRoleAsync(id, updateRoleDto);
-            return NoContent();
+            return Ok(ApiResponse<bool>.Success("Role updated successfully", true));
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<ActionResult<ApiResponse<bool>>> Delete(int id)
         {
             await _roleService.DeleteRoleAsync(id);
-            return NoContent();
+            return Ok(ApiResponse<bool>.Success("Role deleted successfully", true));
         }
     }
 }

@@ -18,24 +18,24 @@ namespace APIKlinik.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserRoleDto>>> Get()
+        public async Task<ActionResult<ApiResponse<IEnumerable<UserRoleDto>>>> Get()
         {
             var userRoles = await _userRoleService.GetAllUserRolesAsync();
-            return Ok(userRoles);
+            return Ok(ApiResponse<IEnumerable<UserRoleDto>>.Success(userRoles));
         }
 
         [HttpPost("assign")]
-        public async Task<IActionResult> AssignRoleToUser([FromBody] AssignUserRoleDto assignUserRoleDto)
+        public async Task<ActionResult<ApiResponse<bool>>> AssignRoleToUser([FromBody] AssignUserRoleDto assignUserRoleDto)
         {
             await _userRoleService.AssignRoleToUser(assignUserRoleDto);
-            return NoContent();
+            return Ok(ApiResponse<bool>.Success("Role assigned to user successfully", true));
         }
 
         [HttpDelete("remove/{userId}/{roleId}")]
-        public async Task<IActionResult> RemoveRoleFromUser(int userId, int roleId)
+        public async Task<ActionResult<ApiResponse<bool>>> RemoveRoleFromUser(int userId, int roleId)
         {
             await _userRoleService.RemoveRoleFromUser(userId, roleId);
-            return NoContent();
+            return Ok(ApiResponse<bool>.Success("Role removed from user successfully", true));
         }
     }
 }

@@ -18,24 +18,24 @@ namespace APIKlinik.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MenuRoleDto>>> Get()
+        public async Task<ActionResult<ApiResponse<IEnumerable<MenuRoleDto>>>> Get()
         {
             var menuRoles = await _menuRoleService.GetAllMenuRolesAsync();
-            return Ok(menuRoles);
+            return Ok(ApiResponse<IEnumerable<MenuRoleDto>>.Success(menuRoles));
         }
 
         [HttpPost("assign")]
-        public async Task<IActionResult> AssignMenuToRole([FromBody] AssignMenuRoleDto assignMenuRoleDto)
+        public async Task<ActionResult<ApiResponse<bool>>> AssignMenuToRole([FromBody] AssignMenuRoleDto assignMenuRoleDto)
         {
             await _menuRoleService.AssignMenuToRole(assignMenuRoleDto);
-            return NoContent();
+            return Ok(ApiResponse<bool>.Success("Menu assigned to role successfully", true));
         }
 
         [HttpDelete("remove/{menuId}/{roleId}")]
-        public async Task<IActionResult> RemoveMenuFromRole(int menuId, int roleId)
+        public async Task<ActionResult<ApiResponse<bool>>> RemoveMenuFromRole(int menuId, int roleId)
         {
             await _menuRoleService.RemoveMenuFromRole(menuId, roleId);
-            return NoContent();
+            return Ok(ApiResponse<bool>.Success("Menu removed from role successfully", true));
         }
     }
 }

@@ -46,6 +46,18 @@ builder.Services.AddInfrastructureServices();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowNextJs",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials(); // kalau pakai cookie/token
+        });
+});
+
 // Configure JWT Authentication
 builder.Services.AddAuthentication(options =>
 {
@@ -106,6 +118,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowNextJs");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

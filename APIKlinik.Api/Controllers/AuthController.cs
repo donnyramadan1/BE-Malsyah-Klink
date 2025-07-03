@@ -21,8 +21,10 @@ namespace APIKlinik.Api.Controllers
         public async Task<ActionResult<AuthResponseDto>> Login([FromBody] LoginDto loginDto)
         {
             var response = await _authService.LoginAsync(loginDto);
-            if (response == null) return Unauthorized();
-            return Ok(response);
+            if (response == null)
+                return Unauthorized(ApiResponse<AuthResponseDto>.Unauthorized("Invalid credentials"));
+
+            return Ok(ApiResponse<AuthResponseDto>.Success(response));
         }
     }
 }
