@@ -15,5 +15,7 @@ namespace APIKlinik.Domain.Interfaces
         Task UpdateAsync(T entity);
         Task DeleteAsync(int id);
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
+
+        Task<IEnumerable<T>> GetAllWithIncludesAsync(params Expression<Func<T, object>>[] includes);
     }
 }

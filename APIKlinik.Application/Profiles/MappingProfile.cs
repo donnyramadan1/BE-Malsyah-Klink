@@ -112,7 +112,9 @@ namespace APIKlinik.Application.Profiles
             // MenuRole Mappings
             CreateMap<MenuRole, MenuRoleDto>()
                 .ForMember(dest => dest.MenuId, opt => opt.MapFrom(src => src.MenuId))
-                .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.RoleId));
+                .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.RoleId))
+                .ForMember(dest => dest.Menu, opt => opt.MapFrom(src => src.Menu))
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role));
 
             CreateMap<AssignMenuRoleDto, MenuRole>()
                 .ForMember(dest => dest.MenuId, opt => opt.MapFrom(src => src.MenuId))

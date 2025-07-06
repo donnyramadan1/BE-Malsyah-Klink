@@ -10,6 +10,8 @@ namespace APIKlinik.Application.DTOs
     {
         public int MenuId { get; set; }
         public int RoleId { get; set; }
+        public MenuDto Menu { get; set; }
+        public RoleDto Role { get; set; }
     }
 
     public class AssignMenuRoleDto

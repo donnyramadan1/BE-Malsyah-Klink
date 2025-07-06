@@ -24,7 +24,10 @@ namespace APIKlinik.Application.Services
 
         public async Task<IEnumerable<MenuRoleDto>> GetAllMenuRolesAsync()
         {
-            var menuRoles = await _menuRoleRepository.GetAllAsync();
+            var menuRoles = await _menuRoleRepository.GetAllWithIncludesAsync(
+                            mr => mr.Menu,
+                            mr => mr.Role
+                        );
             return _mapper.Map<IEnumerable<MenuRoleDto>>(menuRoles);
         }
 
