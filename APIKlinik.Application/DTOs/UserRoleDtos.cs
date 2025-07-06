@@ -1,4 +1,5 @@
-﻿using System;
+﻿using APIKlinik.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,8 @@ namespace APIKlinik.Application.DTOs
     {
         public int UserId { get; set; }
         public int RoleId { get; set; }
+        public UserDto Users { get; set; }
+        public RoleDto Roles { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

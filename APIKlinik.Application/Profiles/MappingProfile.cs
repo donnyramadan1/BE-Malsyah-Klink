@@ -100,6 +100,8 @@ namespace APIKlinik.Application.Profiles
             CreateMap<UserRole, UserRoleDto>()
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.RoleId))
+                .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.Role))
+                .ForMember(dest => dest.Users, opt => opt.MapFrom(src => src.User))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt));
 

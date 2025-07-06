@@ -24,7 +24,10 @@ namespace APIKlinik.Application.Services
 
         public async Task<IEnumerable<UserRoleDto>> GetAllUserRolesAsync()
         {
-            var userRoles = await _userRoleRepository.GetAllAsync();
+            var userRoles = await _userRoleRepository.GetAllWithIncludesAsync(
+                            mr => mr.User,
+                            mr => mr.Role
+                        );
             return _mapper.Map<IEnumerable<UserRoleDto>>(userRoles);
         }
 
