@@ -18,13 +18,20 @@ namespace APIKlinik.Api.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<AuthResponseDto>> Login([FromBody] LoginDto loginDto)
+        public async Task<ActionResult<ApiResponse<AuthResponseDto>>> Login([FromBody] LoginDto loginDto)
         {
-            var response = await _authService.LoginAsync(loginDto);
-            if (response == null)
-                return Unauthorized(ApiResponse<AuthResponseDto>.Unauthorized("Invalid credentials"));
+            try
+            {
+                var response = await _authService.LoginAsync(loginDto);
+                if (response == null)
+                    return Unauthorized(ApiResponse<AuthResponseDto>.Unauthorized("Email atau password salah"));
 
-            return Ok(ApiResponse<AuthResponseDto>.Success(response));
+                return Ok(ApiResponse<AuthResponseDto>.Success("Login berhasil", response));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResponse<AuthResponseDto>.InternalError("Terjadi kesalahan saat login: " + ex.Message));
+            }
         }
     }
 }

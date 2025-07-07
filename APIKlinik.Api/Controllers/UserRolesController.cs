@@ -20,22 +20,43 @@ namespace APIKlinik.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IEnumerable<UserRoleDto>>>> Get()
         {
-            var userRoles = await _userRoleService.GetAllUserRolesAsync();
-            return Ok(ApiResponse<IEnumerable<UserRoleDto>>.Success(userRoles));
+            try
+            {
+                var userRoles = await _userRoleService.GetAllUserRolesAsync();
+                return Ok(ApiResponse<IEnumerable<UserRoleDto>>.Success("Berhasil mengambil data user role", userRoles));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResponse<IEnumerable<UserRoleDto>>.InternalError("Terjadi kesalahan saat mengambil data user role: " + ex.Message));
+            }
         }
 
         [HttpPost("assign")]
         public async Task<ActionResult<ApiResponse<bool>>> AssignRoleToUser([FromBody] AssignUserRoleDto assignUserRoleDto)
         {
-            await _userRoleService.AssignRoleToUser(assignUserRoleDto);
-            return Ok(ApiResponse<bool>.Success("Role assigned to user successfully", true));
+            try
+            {
+                await _userRoleService.AssignRoleToUser(assignUserRoleDto);
+                return Ok(ApiResponse<bool>.Success("Role berhasil ditetapkan ke user", true));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResponse<bool>.InternalError("Gagal menetapkan role ke user: " + ex.Message));
+            }
         }
 
         [HttpDelete("remove/{userId}/{roleId}")]
         public async Task<ActionResult<ApiResponse<bool>>> RemoveRoleFromUser(int userId, int roleId)
         {
-            await _userRoleService.RemoveRoleFromUser(userId, roleId);
-            return Ok(ApiResponse<bool>.Success("Role removed from user successfully", true));
+            try
+            {
+                await _userRoleService.RemoveRoleFromUser(userId, roleId);
+                return Ok(ApiResponse<bool>.Success("Role berhasil dihapus dari user", true));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResponse<bool>.InternalError("Gagal menghapus role dari user: " + ex.Message));
+            }
         }
     }
 }

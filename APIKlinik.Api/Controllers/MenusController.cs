@@ -20,41 +20,77 @@ namespace APIKlinik.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IEnumerable<MenuDto>>>> Get()
         {
-            var menus = await _menuService.GetAllMenusAsync();
-            return Ok(ApiResponse<IEnumerable<MenuDto>>.Success(menus));
+            try
+            {
+                var menus = await _menuService.GetAllMenusAsync();
+                return Ok(ApiResponse<IEnumerable<MenuDto>>.Success("Berhasil mengambil data menu", menus));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResponse<IEnumerable<MenuDto>>.InternalError("Terjadi kesalahan saat mengambil data menu: " + ex.Message));
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<MenuDto>>> Get(int id)
         {
-            var menu = await _menuService.GetMenuByIdAsync(id);
-            if (menu == null)
+            try
             {
-                return NotFound(ApiResponse<MenuDto>.NotFound("Menu not found"));
+                var menu = await _menuService.GetMenuByIdAsync(id);
+                if (menu == null)
+                {
+                    return NotFound(ApiResponse<MenuDto>.NotFound("Menu tidak ditemukan"));
+                }
+
+                return Ok(ApiResponse<MenuDto>.Success("Berhasil mengambil detail menu", menu));
             }
-            return Ok(ApiResponse<MenuDto>.Success(menu));
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResponse<MenuDto>.InternalError("Terjadi kesalahan saat mengambil detail menu: " + ex.Message));
+            }
         }
 
         [HttpPost]
         public async Task<ActionResult<ApiResponse<MenuDto>>> Post([FromBody] CreateMenuDto createMenuDto)
         {
-            var menu = await _menuService.AddMenuAsync(createMenuDto);
-            return CreatedAtAction(nameof(Get), new { id = menu.Id },
-                ApiResponse<MenuDto>.Success("Menu created successfully", menu));
+            try
+            {
+                var menu = await _menuService.AddMenuAsync(createMenuDto);
+                return CreatedAtAction(nameof(Get), new { id = menu.Id },
+                    ApiResponse<MenuDto>.Success("Menu berhasil dibuat", menu));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResponse<MenuDto>.InternalError("Gagal membuat menu: " + ex.Message));
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<ApiResponse<bool>>> Put(int id, [FromBody] UpdateMenuDto updateMenuDto)
         {
-            await _menuService.UpdateMenuAsync(id, updateMenuDto);
-            return Ok(ApiResponse<bool>.Success("Menu updated successfully", true));
+            try
+            {
+                await _menuService.UpdateMenuAsync(id, updateMenuDto);
+                return Ok(ApiResponse<bool>.Success("Menu berhasil diperbarui", true));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResponse<bool>.InternalError("Gagal memperbarui menu: " + ex.Message));
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<ApiResponse<bool>>> Delete(int id)
         {
-            await _menuService.DeleteMenuAsync(id);
-            return Ok(ApiResponse<bool>.Success("Menu deleted successfully", true));
+            try
+            {
+                await _menuService.DeleteMenuAsync(id);
+                return Ok(ApiResponse<bool>.Success("Menu berhasil dihapus", true));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResponse<bool>.InternalError("Gagal menghapus menu: " + ex.Message));
+            }
         }
     }
 }

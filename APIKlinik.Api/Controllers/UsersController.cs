@@ -20,41 +20,76 @@ namespace APIKlinik.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IEnumerable<UserDto>>>> Get()
         {
-            var users = await _userService.GetAllUsersAsync();
-            return Ok(ApiResponse<IEnumerable<UserDto>>.Success(users));
+            try
+            {
+                var users = await _userService.GetAllUsersAsync();
+                return Ok(ApiResponse<IEnumerable<UserDto>>.Success("Berhasil mengambil data user", users));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResponse<IEnumerable<UserDto>>.InternalError("Terjadi kesalahan saat mengambil data user: " + ex.Message));
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<UserDto>>> Get(int id)
         {
-            var user = await _userService.GetUserByIdAsync(id);
-            if (user == null)
-                return NotFound(ApiResponse<UserDto>.NotFound("User not found"));
+            try
+            {
+                var user = await _userService.GetUserByIdAsync(id);
+                if (user == null)
+                    return NotFound(ApiResponse<UserDto>.NotFound("User tidak ditemukan"));
 
-            return Ok(ApiResponse<UserDto>.Success(user));
+                return Ok(ApiResponse<UserDto>.Success("Berhasil mengambil detail user", user));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResponse<UserDto>.InternalError("Terjadi kesalahan saat mengambil detail user: " + ex.Message));
+            }
         }
 
         [HttpPost]
         [AllowAnonymous]
         public async Task<ActionResult<ApiResponse<UserDto>>> Post([FromBody] CreateUserDto createUserDto)
         {
-            var user = await _userService.AddUserAsync(createUserDto);
-            return CreatedAtAction(nameof(Get), new { id = user.Id },
-                ApiResponse<UserDto>.Success("User created successfully", user));
+            try
+            {
+                var user = await _userService.AddUserAsync(createUserDto);
+                return CreatedAtAction(nameof(Get), new { id = user.Id },
+                    ApiResponse<UserDto>.Success("User berhasil dibuat", user));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResponse<UserDto>.InternalError("Gagal membuat user: " + ex.Message));
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<ApiResponse<bool>>> Put(int id, [FromBody] UpdateUserDto updateUserDto)
         {
-            await _userService.UpdateUserAsync(id, updateUserDto);
-            return Ok(ApiResponse<bool>.Success("User updated successfully", true));
+            try
+            {
+                await _userService.UpdateUserAsync(id, updateUserDto);
+                return Ok(ApiResponse<bool>.Success("User berhasil diperbarui", true));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResponse<bool>.InternalError("Gagal memperbarui user: " + ex.Message));
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<ApiResponse<bool>>> Delete(int id)
         {
-            await _userService.DeleteUserAsync(id);
-            return Ok(ApiResponse<bool>.Success("User deleted successfully", true));
+            try
+            {
+                await _userService.DeleteUserAsync(id);
+                return Ok(ApiResponse<bool>.Success("User berhasil dihapus", true));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResponse<bool>.InternalError("Gagal menghapus user: " + ex.Message));
+            }
         }
     }
 }
