@@ -3,6 +3,7 @@ using APIKlinik.Application.Interfaces;
 using APIKlinik.Domain.Entities;
 using APIKlinik.Infrastructure.Repositories;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 
 namespace APIKlinik.Application.Services
 {
@@ -10,45 +11,94 @@ namespace APIKlinik.Application.Services
     {
         private readonly IRoleRepository _roleRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<RoleService> _logger;
 
-        public RoleService(IRoleRepository roleRepository, IMapper mapper)
+        public RoleService(IRoleRepository roleRepository, IMapper mapper, ILogger<RoleService> logger)
         {
             _roleRepository = roleRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<RoleDto>> GetAllRolesAsync()
         {
-            var roles = await _roleRepository.GetAllAsync();
-            return _mapper.Map<IEnumerable<RoleDto>>(roles);
+            try
+            {
+                var roles = await _roleRepository.GetAllAsync();
+                return _mapper.Map<IEnumerable<RoleDto>>(roles);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Gagal mengambil data semua role.");
+                throw new ApplicationException("Terjadi kesalahan saat mengambil data role.");
+            }
         }
 
         public async Task<RoleDto> GetRoleByIdAsync(int id)
         {
-            var role = await _roleRepository.GetByIdAsync(id);
-            return _mapper.Map<RoleDto>(role);
+            try
+            {
+                var role = await _roleRepository.GetByIdAsync(id);
+                if (role == null)
+                    throw new ApplicationException("Role tidak ditemukan.");
+
+                return _mapper.Map<RoleDto>(role);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Gagal mengambil role dengan ID: {RoleId}", id);
+                throw new ApplicationException("Terjadi kesalahan saat mengambil detail role.");
+            }
         }
 
         public async Task<RoleDto> AddRoleAsync(CreateRoleDto createRoleDto)
         {
-            var role = _mapper.Map<Role>(createRoleDto);
-            await _roleRepository.AddAsync(role);
-            return _mapper.Map<RoleDto>(role);
+            try
+            {
+                var role = _mapper.Map<Role>(createRoleDto);
+                await _roleRepository.AddAsync(role);
+                return _mapper.Map<RoleDto>(role);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Gagal menambahkan role baru.");
+                throw new ApplicationException("Terjadi kesalahan saat menambahkan role.");
+            }
         }
 
         public async Task UpdateRoleAsync(int id, UpdateRoleDto updateRoleDto)
         {
-            var role = await _roleRepository.GetByIdAsync(id);
-            if (role != null)
+            try
             {
+                var role = await _roleRepository.GetByIdAsync(id);
+                if (role == null)
+                    throw new ApplicationException("Role tidak ditemukan untuk diperbarui.");
+
                 _mapper.Map(updateRoleDto, role);
                 await _roleRepository.UpdateAsync(role);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Gagal memperbarui role dengan ID: {RoleId}", id);
+                throw new ApplicationException("Terjadi kesalahan saat memperbarui role.");
             }
         }
 
         public async Task DeleteRoleAsync(int id)
         {
-            await _roleRepository.DeleteAsync(id);
+            try
+            {
+                var role = await _roleRepository.GetByIdAsync(id);
+                if (role == null)
+                    throw new ApplicationException("Role tidak ditemukan untuk dihapus.");
+
+                await _roleRepository.DeleteAsync(id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Gagal menghapus role dengan ID: {RoleId}", id);
+                throw new ApplicationException("Terjadi kesalahan saat menghapus role.");
+            }
         }
-    }   
+    }
 }
