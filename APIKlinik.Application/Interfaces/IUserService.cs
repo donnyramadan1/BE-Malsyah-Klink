@@ -1,4 +1,5 @@
 ﻿using APIKlinik.Application.DTOs;
+using APIKlinik.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace APIKlinik.Application.Interfaces
     {
         Task<IEnumerable<UserDto>> GetAllUsersAsync();
         Task<UserDto> GetUserByIdAsync(int id);
+        Task<PagedResult<UserDto>> GetPagedUsersAsync(int page, int pageSize);
         Task<UserDto> AddUserAsync(CreateUserDto createUserDto);
         Task UpdateUserAsync(int id, UpdateUserDto updateUserDto);
         Task DeleteUserAsync(int id);

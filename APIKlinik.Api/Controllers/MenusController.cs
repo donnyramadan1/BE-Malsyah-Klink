@@ -1,5 +1,6 @@
 ﻿using APIKlinik.Application.DTOs;
 using APIKlinik.Application.Interfaces;
+using APIKlinik.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -49,6 +50,21 @@ namespace APIKlinik.Api.Controllers
                 return StatusCode(500, ApiResponse<MenuDto>.InternalError("Terjadi kesalahan saat mengambil detail menu: " + ex.Message));
             }
         }
+
+        [HttpGet("paged")]
+        public async Task<ActionResult<ApiResponse<PagedResult<MenuDto>>>> GetPaged([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var pagedMenus = await _menuService.GetPagedMenusAsync(page, pageSize);
+                return Ok(ApiResponse<PagedResult<MenuDto>>.Success("Berhasil mengambil data menu dengan pagination", pagedMenus));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResponse<PagedResult<MenuDto>>.InternalError("Terjadi kesalahan saat mengambil data menu: " + ex.Message));
+            }
+        }
+
 
         [HttpPost]
         public async Task<ActionResult<ApiResponse<MenuDto>>> Post([FromBody] CreateMenuDto createMenuDto)

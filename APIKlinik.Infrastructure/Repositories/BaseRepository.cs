@@ -64,5 +64,51 @@ namespace APIKlinik.Infrastructure.Repositories
 
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate) =>
             await _entities.Where(predicate).ToListAsync();
+
+        public async Task<PagedResult<T>> GetPagedAsync(int page, int pageSize, Expression<Func<T, bool>>? filter = null)
+        {
+            var query = _entities.AsQueryable();
+
+            if (filter != null)
+                query = query.Where(filter);
+
+            var totalItems = await query.CountAsync();
+            var items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            return new PagedResult<T>
+            {
+                Items = items,
+                TotalItems = totalItems,
+                Page = page,
+                PageSize = pageSize
+            };
+        }
+
+        public async Task<PagedResult<T>> GetPagedWithIncludesAsync(
+            int page,
+            int pageSize,
+            Expression<Func<T, bool>>? filter = null,
+            params Expression<Func<T, object>>[] includes)
+        {
+            var query = _entities.AsQueryable();
+
+            foreach (var include in includes)
+                query = query.Include(include);
+
+            if (filter != null)
+                query = query.Where(filter);
+
+            var totalItems = await query.CountAsync();
+            var items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            return new PagedResult<T>
+            {
+                Items = items,
+                TotalItems = totalItems,
+                Page = page,
+                PageSize = pageSize
+            };
+        }
+
     }
 }

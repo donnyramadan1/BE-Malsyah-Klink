@@ -1,4 +1,5 @@
 ﻿using APIKlinik.Application.DTOs;
+using APIKlinik.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,9 @@ namespace APIKlinik.Application.Interfaces
     {
         Task<IEnumerable<RoleDto>> GetAllRolesAsync();
         Task<RoleDto> GetRoleByIdAsync(int id);
+
+        Task<PagedResult<RoleDto>> GetPagedRolesAsync(int page, int pageSize);
+
         Task<RoleDto> AddRoleAsync(CreateRoleDto createRoleDto);
         Task UpdateRoleAsync(int id, UpdateRoleDto updateRoleDto);
         Task DeleteRoleAsync(int id);

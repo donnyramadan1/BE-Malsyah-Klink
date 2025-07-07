@@ -1,5 +1,6 @@
 ﻿using APIKlinik.Application.DTOs;
 using APIKlinik.Application.Interfaces;
+using APIKlinik.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,6 +29,20 @@ namespace APIKlinik.Api.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, ApiResponse<IEnumerable<UserRoleDto>>.InternalError("Terjadi kesalahan saat mengambil data user role: " + ex.Message));
+            }
+        }
+
+        [HttpGet("paged")]
+        public async Task<ActionResult<ApiResponse<PagedResult<UserRoleDto>>>> GetPaged([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var result = await _userRoleService.GetPagedUserRolesAsync(page, pageSize);
+                return Ok(ApiResponse<PagedResult<UserRoleDto>>.Success("Berhasil mengambil data user role dengan pagination", result));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResponse<PagedResult<UserRoleDto>>.InternalError("Terjadi kesalahan saat mengambil data user role: " + ex.Message));
             }
         }
 

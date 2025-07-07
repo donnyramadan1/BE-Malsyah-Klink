@@ -51,6 +51,27 @@ namespace APIKlinik.Application.Services
             }
         }
 
+        public async Task<PagedResult<UserDto>> GetPagedUsersAsync(int page, int pageSize)
+        {
+            try
+            {
+                var result = await _userRepository.GetPagedAsync(page, pageSize);
+                return new PagedResult<UserDto>
+                {
+                    Items = _mapper.Map<IEnumerable<UserDto>>(result.Items),
+                    TotalItems = result.TotalItems,
+                    Page = result.Page,
+                    PageSize = result.PageSize
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Gagal memuat data user dengan pagination.");
+                throw new ApplicationException("Terjadi kesalahan saat memuat data user.");
+            }
+        }
+
+
         public async Task<UserDto> AddUserAsync(CreateUserDto createUserDto)
         {
             try
