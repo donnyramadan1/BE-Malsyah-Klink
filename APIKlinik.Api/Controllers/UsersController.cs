@@ -51,16 +51,16 @@ namespace APIKlinik.Api.Controllers
         }
 
         [HttpGet("paged")]
-        public async Task<ActionResult<ApiResponse<PagedResult<UserDto>>>> GetPaged([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<ApiResponse<PagedResult<UserDto>>>> GetPaged([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? search = null)
         {
             try
             {
-                var result = await _userService.GetPagedUsersAsync(page, pageSize);
-                return Ok(ApiResponse<PagedResult<UserDto>>.Success("Berhasil mengambil data user role dengan pagination", result));
+                var result = await _userService.GetPagedUsersAsync(page, pageSize, search);
+                return Ok(ApiResponse<PagedResult<UserDto>>.Success("Berhasil mengambil data user dengan pagination", result));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ApiResponse<PagedResult<UserDto>>.InternalError("Terjadi kesalahan saat mengambil data user role: " + ex.Message));
+                return StatusCode(500, ApiResponse<PagedResult<UserDto>>.InternalError("Terjadi kesalahan saat mengambil data user: " + ex.Message));
             }
         }
 

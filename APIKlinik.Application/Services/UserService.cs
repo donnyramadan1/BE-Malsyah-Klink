@@ -4,6 +4,7 @@ using APIKlinik.Domain.Entities;
 using APIKlinik.Infrastructure.Repositories;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
+using System.Linq.Expressions;
 
 namespace APIKlinik.Application.Services
 {
@@ -51,11 +52,20 @@ namespace APIKlinik.Application.Services
             }
         }
 
-        public async Task<PagedResult<UserDto>> GetPagedUsersAsync(int page, int pageSize)
+        public async Task<PagedResult<UserDto>> GetPagedUsersAsync(int page, int pageSize, string? search = null)
         {
             try
             {
-                var result = await _userRepository.GetPagedAsync(page, pageSize);
+                Expression<Func<User, bool>>? filter = null;
+
+                if (!string.IsNullOrEmpty(search))
+                {
+                    filter = u => u.FullName.Contains(search) ||
+                                  u.Email.Contains(search) ||
+                                 (u.Username != null && u.Username.Contains(search));
+                }
+
+                var result = await _userRepository.GetPagedAsync(page, pageSize, filter);
                 return new PagedResult<UserDto>
                 {
                     Items = _mapper.Map<IEnumerable<UserDto>>(result.Items),

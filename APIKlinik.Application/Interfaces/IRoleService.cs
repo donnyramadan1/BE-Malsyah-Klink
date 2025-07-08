@@ -13,7 +13,7 @@ namespace APIKlinik.Application.Interfaces
         Task<IEnumerable<RoleDto>> GetAllRolesAsync();
         Task<RoleDto> GetRoleByIdAsync(int id);
 
-        Task<PagedResult<RoleDto>> GetPagedRolesAsync(int page, int pageSize);
+        Task<PagedResult<RoleDto>> GetPagedRolesAsync(int page, int pageSize, string? search = null);
 
         Task<RoleDto> AddRoleAsync(CreateRoleDto createRoleDto);
         Task UpdateRoleAsync(int id, UpdateRoleDto updateRoleDto);

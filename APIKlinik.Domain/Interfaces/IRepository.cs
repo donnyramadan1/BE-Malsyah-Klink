@@ -15,10 +15,15 @@ namespace APIKlinik.Domain.Interfaces
         Task AddAsync(T entity);
         Task UpdateAsync(T entity);
         Task DeleteAsync(int id);
+        Task DeleteEntityAsync(T entity);
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
         Task<IEnumerable<T>> GetAllWithIncludesAsync(params Expression<Func<T, object>>[] includes);
 
         Task<PagedResult<T>> GetPagedAsync(int page, int pageSize, Expression<Func<T, bool>>? filter = null);
         Task<PagedResult<T>> GetPagedWithIncludesAsync(int page, int pageSize, Expression<Func<T, bool>>? filter = null, params Expression<Func<T, object>>[] includes);
+        Task<PagedResult<T>> GetPagedOrderedAsync<TKey>(int page, int pageSize,
+           Expression<Func<T, bool>>? filter = null,
+           Expression<Func<T, TKey>>? orderBy = null,
+           bool ascending = true);
     }
 }

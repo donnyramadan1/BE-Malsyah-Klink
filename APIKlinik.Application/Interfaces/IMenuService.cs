@@ -15,7 +15,7 @@ namespace APIKlinik.Application.Interfaces
         Task<MenuDto> AddMenuAsync(CreateMenuDto createMenuDto);
         Task UpdateMenuAsync(int id, UpdateMenuDto updateMenuDto);
         Task DeleteMenuAsync(int id);
-        Task<PagedResult<MenuDto>> GetPagedMenusAsync(int page, int pageSize);
+        Task<PagedResult<MenuDto>> GetPagedMenusAsync(int page, int pageSize, string? search = null);
 
     }
 }

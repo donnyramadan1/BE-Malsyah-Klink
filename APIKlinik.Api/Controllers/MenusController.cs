@@ -52,11 +52,11 @@ namespace APIKlinik.Api.Controllers
         }
 
         [HttpGet("paged")]
-        public async Task<ActionResult<ApiResponse<PagedResult<MenuDto>>>> GetPaged([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<ApiResponse<PagedResult<MenuDto>>>> GetPaged([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? search = null)
         {
             try
             {
-                var pagedMenus = await _menuService.GetPagedMenusAsync(page, pageSize);
+                var pagedMenus = await _menuService.GetPagedMenusAsync(page, pageSize, search);
                 return Ok(ApiResponse<PagedResult<MenuDto>>.Success("Berhasil mengambil data menu dengan pagination", pagedMenus));
             }
             catch (Exception ex)

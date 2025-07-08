@@ -12,7 +12,7 @@ namespace APIKlinik.Application.Interfaces
     {
         Task<IEnumerable<UserDto>> GetAllUsersAsync();
         Task<UserDto> GetUserByIdAsync(int id);
-        Task<PagedResult<UserDto>> GetPagedUsersAsync(int page, int pageSize);
+        Task<PagedResult<UserDto>> GetPagedUsersAsync(int page, int pageSize, string? search = null);
         Task<UserDto> AddUserAsync(CreateUserDto createUserDto);
         Task UpdateUserAsync(int id, UpdateUserDto updateUserDto);
         Task DeleteUserAsync(int id);

@@ -75,7 +75,7 @@ namespace APIKlinik.Application.Services
                     throw new ApplicationException("Relasi menu-role tidak ditemukan.");
                 }
 
-                await _menuRoleRepository.DeleteAsync(menuRole.RoleId);
+                await _menuRoleRepository.DeleteEntityAsync(menuRole);
             }
             catch (Exception ex)
             {

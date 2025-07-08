@@ -4,6 +4,7 @@ using APIKlinik.Domain.Entities;
 using APIKlinik.Domain.Interfaces;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
+using System.Linq.Expressions;
 
 namespace APIKlinik.Application.Services
 {
@@ -51,11 +52,19 @@ namespace APIKlinik.Application.Services
             }
         }
 
-        public async Task<PagedResult<MenuDto>> GetPagedMenusAsync(int page, int pageSize)
+        public async Task<PagedResult<MenuDto>> GetPagedMenusAsync(int page, int pageSize, string? search = null)
         {
             try
             {
-                var result = await _menuRepository.GetPagedAsync(page, pageSize);
+                Expression<Func<Menu, bool>>? filter = null;
+
+                if (!string.IsNullOrEmpty(search))
+                {
+                    filter = m => m.Title.Contains(search) ||
+                                 (m.Path != null && m.Path.Contains(search));                                 
+                }
+
+                var result = await _menuRepository.GetPagedOrderedAsync(page, pageSize, filter, m => m.OrderNum);
                 return new PagedResult<MenuDto>
                 {
                     Items = _mapper.Map<IEnumerable<MenuDto>>(result.Items),
@@ -66,8 +75,8 @@ namespace APIKlinik.Application.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Gagal memuat data user dengan pagination.");
-                throw new ApplicationException("Terjadi kesalahan saat memuat data user.");
+                _logger.LogError(ex, "Gagal memuat data menu dengan pagination.");
+                throw new ApplicationException("Terjadi kesalahan saat memuat data menu.");
             }
         }
 

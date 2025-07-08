@@ -84,6 +84,40 @@ namespace APIKlinik.Infrastructure.Repositories
             };
         }
 
+        public async Task<PagedResult<T>> GetPagedOrderedAsync<TKey>(
+        int page,
+        int pageSize,
+        Expression<Func<T, bool>>? filter = null,
+        Expression<Func<T, TKey>>? orderBy = null,
+        bool ascending = true)
+            {
+                var query = _entities.AsQueryable();
+
+                if (filter != null)
+                    query = query.Where(filter);
+
+                if (orderBy != null)
+                {
+                    query = ascending ?
+                        query.OrderBy(orderBy) :
+                        query.OrderByDescending(orderBy);
+                }                
+
+                var totalItems = await query.CountAsync();
+                var items = await query
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                return new PagedResult<T>
+                {
+                    Items = items,
+                    TotalItems = totalItems,
+                    Page = page,
+                    PageSize = pageSize
+                };
+            }
+
         public async Task<PagedResult<T>> GetPagedWithIncludesAsync(
             int page,
             int pageSize,
@@ -110,5 +144,13 @@ namespace APIKlinik.Infrastructure.Repositories
             };
         }
 
+        public async Task DeleteEntityAsync(T entity)
+        {
+            if (entity != null)
+            {
+                _entities.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }
