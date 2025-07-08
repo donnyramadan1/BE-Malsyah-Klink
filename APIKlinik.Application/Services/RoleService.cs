@@ -60,8 +60,8 @@ namespace APIKlinik.Application.Services
 
                 if (!string.IsNullOrEmpty(search))
                 {
-                    filter = r => r.Name.Contains(search) ||
-                                 r.Description.Contains(search);
+                    filter = r => r.Name.ToLower().Contains(search.ToLower()) ||
+                                 r.Description.ToLower().Contains(search.ToLower());
                 }
 
                 var result = await _roleRepository.GetPagedAsync(page, pageSize, filter);

@@ -60,8 +60,8 @@ namespace APIKlinik.Application.Services
 
                 if (!string.IsNullOrEmpty(search))
                 {
-                    filter = m => m.Title.Contains(search) ||
-                                 (m.Path != null && m.Path.Contains(search));                                 
+                    filter = m => (m.Title.ToLower().Contains(search.ToLower())) ||
+                                 (m.Path.ToLower() != null && m.Path.ToLower().Contains(search.ToLower()));                                 
                 }
 
                 var result = await _menuRepository.GetPagedOrderedAsync(page, pageSize, filter, m => m.OrderNum);

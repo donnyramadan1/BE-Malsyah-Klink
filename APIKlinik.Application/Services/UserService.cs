@@ -60,9 +60,9 @@ namespace APIKlinik.Application.Services
 
                 if (!string.IsNullOrEmpty(search))
                 {
-                    filter = u => u.FullName.Contains(search) ||
-                                  u.Email.Contains(search) ||
-                                 (u.Username != null && u.Username.Contains(search));
+                    filter = u => u.FullName.ToLower().Contains(search.ToLower()) ||
+                                  u.Email.Contains(search.ToLower()) ||
+                                 (u.Username.ToLower() != null && u.Username.Contains(search.ToLower()));
                 }
 
                 var result = await _userRepository.GetPagedAsync(page, pageSize, filter);
