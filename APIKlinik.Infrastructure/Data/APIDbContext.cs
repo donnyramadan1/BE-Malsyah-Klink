@@ -17,6 +17,12 @@ namespace APIKlinik.Infrastructure.Data
         public DbSet<Menu> Menus { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<MenuRole> MenuRoles { get; set; }
+        public DbSet<Attendance> Attendances { get; set; }
+        public DbSet<AttendanceLog> AttendanceLogs { get; set; }
+        public DbSet<Shift> Shifts { get; set; }
+        public DbSet<UserShift> UserShifts { get; set; }
+        public DbSet<Location> Locations { get; set; }
+        public DbSet<FaceData> FaceDatas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -130,6 +136,127 @@ namespace APIKlinik.Infrastructure.Data
                     .WithMany(r => r.MenuRoles)
                     .HasForeignKey(mr => mr.RoleId)
                     .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            // Konfigurasi tabel attendances
+            modelBuilder.Entity<Attendance>(entity =>
+            {
+                entity.ToTable("attendances", "public");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnName("id").ValueGeneratedOnAdd();
+                entity.Property(e => e.UserId).HasColumnName("user_id").IsRequired();
+                entity.Property(e => e.Date).HasColumnName("date").IsRequired();
+                entity.Property(e => e.CheckinTime).HasColumnName("checkin_time");
+                entity.Property(e => e.CheckoutTime).HasColumnName("checkout_time");
+                entity.Property(e => e.Status).HasColumnName("status").HasMaxLength(20).IsRequired();
+                entity.Property(e => e.Latitude).HasColumnName("latitude").HasColumnType("decimal(9,6)");
+                entity.Property(e => e.Longitude).HasColumnName("longitude").HasColumnType("decimal(9,6)");
+                entity.Property(e => e.FaceImage).HasColumnName("face_image");
+                entity.Property(e => e.IsLate).HasColumnName("is_late").HasDefaultValue(false);
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+                entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+
+                entity.HasOne(a => a.User)
+                    .WithMany()
+                    .HasForeignKey(a => a.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => new { e.UserId, e.Date }).IsUnique();
+            });
+
+            // Konfigurasi tabel attendance_logs
+            modelBuilder.Entity<AttendanceLog>(entity =>
+            {
+                entity.ToTable("attendance_logs", "public");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnName("id").ValueGeneratedOnAdd();
+                entity.Property(e => e.UserId).HasColumnName("user_id").IsRequired();
+                entity.Property(e => e.Action).HasColumnName("action").HasMaxLength(10).IsRequired();
+                entity.Property(e => e.Status).HasColumnName("status").HasMaxLength(10).IsRequired();
+                entity.Property(e => e.Reason).HasColumnName("reason");
+                entity.Property(e => e.Latitude).HasColumnName("latitude").HasColumnType("decimal(9,6)");
+                entity.Property(e => e.Longitude).HasColumnName("longitude").HasColumnType("decimal(9,6)");
+                entity.Property(e => e.FaceImage).HasColumnName("face_image");
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+
+                entity.HasOne(al => al.User)
+                    .WithMany()
+                    .HasForeignKey(al => al.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Shift>(entity =>
+            {
+                entity.ToTable("shifts", "public");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnName("id").ValueGeneratedOnAdd();
+                entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(100).IsRequired();
+                entity.Property(e => e.StartTime).HasColumnName("start_time").IsRequired();
+                entity.Property(e => e.EndTime).HasColumnName("end_time").IsRequired();
+                entity.Property(e => e.LateToleranceMinutes).HasColumnName("late_tolerance_minutes").HasDefaultValue(15);
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+                entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+
+                entity.HasIndex(e => e.Name).IsUnique();
+            });
+
+            modelBuilder.Entity<UserShift>(entity =>
+            {
+                entity.ToTable("user_shifts", "public");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnName("id").ValueGeneratedOnAdd();
+                entity.Property(e => e.UserId).HasColumnName("user_id").IsRequired();
+                entity.Property(e => e.ShiftId).HasColumnName("shift_id").IsRequired();
+                entity.Property(e => e.Date).HasColumnName("date");
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+                entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+
+                entity.HasOne(us => us.User)
+                    .WithMany()
+                    .HasForeignKey(us => us.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(us => us.Shift)
+                    .WithMany()
+                    .HasForeignKey(us => us.ShiftId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => new { e.UserId, e.Date }).IsUnique();
+            });
+
+            modelBuilder.Entity<Location>(entity =>
+            {
+                entity.ToTable("locations", "public");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnName("id").ValueGeneratedOnAdd();
+                entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(100);
+                entity.Property(e => e.Latitude).HasColumnName("latitude").HasColumnType("decimal(9,6)").IsRequired();
+                entity.Property(e => e.Longitude).HasColumnName("longitude").HasColumnType("decimal(9,6)").IsRequired();
+                entity.Property(e => e.RadiusInMeters).HasColumnName("radius_in_meters").HasDefaultValue(50);
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+                entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+            });
+
+            modelBuilder.Entity<FaceData>(entity =>
+            {
+                entity.ToTable("face_data", "public");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnName("id").ValueGeneratedOnAdd();
+                entity.Property(e => e.UserId).HasColumnName("user_id").IsRequired();
+                entity.Property(e => e.FaceEmbedding).HasColumnName("face_embedding");
+                entity.Property(e => e.FaceImage).HasColumnName("face_image");
+                entity.Property(e => e.IsActive).HasColumnName("is_active").HasDefaultValue(true);
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+                entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+
+                // Relasi dengan tabel users
+                entity.HasOne(fd => fd.User)
+                    .WithMany()
+                    .HasForeignKey(fd => fd.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Constraint UNIQUE untuk user_id
+                entity.HasIndex(e => e.UserId).IsUnique();
             });
         }
     }

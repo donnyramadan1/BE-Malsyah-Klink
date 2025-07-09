@@ -1,11 +1,6 @@
 ﻿using APIKlinik.Application.DTOs;
 using APIKlinik.Domain.Entities;
 using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace APIKlinik.Application.Profiles
 {
@@ -13,6 +8,49 @@ namespace APIKlinik.Application.Profiles
     {
         public MappingProfile()
         {
+            // Shift Mappings
+            CreateMap<Shift, ShiftDto>()
+                .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.StartTime.ToString(@"hh\:mm")))
+                .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.EndTime.ToString(@"hh\:mm")));
+
+            CreateMap<CreateShiftDto, Shift>()
+                .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => TimeSpan.Parse(src.StartTime)))
+                .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => TimeSpan.Parse(src.EndTime)));
+
+            CreateMap<UpdateShiftDto, Shift>()
+                .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => TimeSpan.Parse(src.StartTime)))
+                .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => TimeSpan.Parse(src.EndTime)));
+
+            // UserShift Mappings
+            CreateMap<UserShift, UserShiftDto>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.FullName))
+                .ForMember(dest => dest.ShiftName, opt => opt.MapFrom(src => src.Shift.Name));
+
+            CreateMap<CreateUserShiftDto, UserShift>();
+            CreateMap<UpdateUserShiftDto, UserShift>();
+
+            // Attendance Mappings
+            CreateMap<Attendance, AttendanceDto>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.FullName));
+
+            CreateMap<CheckInOutDto, Attendance>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(_ => "hadir"))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(_ => DateTime.Now.Date));
+
+            CreateMap<AttendanceRequestDto, Attendance>()
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date.Date))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToLower()));
+
+            // AttendanceLog Mappings
+            CreateMap<AttendanceLog, AttendanceLogDto>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.FullName));
+
+            // Location Mappings
+            CreateMap<Location, LocationDto>();
+            CreateMap<CreateLocationDto, Location>();
+            CreateMap<UpdateLocationDto, Location>();
+
+            // Tetap pertahankan mapping yang sudah ada sebelumnya
             // User Mappings
             CreateMap<User, UserDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -121,6 +159,10 @@ namespace APIKlinik.Application.Profiles
             CreateMap<AssignMenuRoleDto, MenuRole>()
                 .ForMember(dest => dest.MenuId, opt => opt.MapFrom(src => src.MenuId))
                 .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.RoleId));
+
+            CreateMap<FaceData, FaceDataDto>();
+            CreateMap<CreateFaceDataDto, FaceData>();
+            CreateMap<UpdateFaceDataDto, FaceData>();
         }
     }
 }

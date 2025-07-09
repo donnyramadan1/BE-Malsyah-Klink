@@ -12,6 +12,7 @@ using APIKlinik.Domain.Entities;
 using APIKlinik.Domain.Interfaces;
 using APIKlinik.Infrastructure.Repositories;
 using APIKlinik.Application.Interfaces;
+using APIKlinik.Infrastructure.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,15 +23,33 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<APIDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Register repositories
+// Register Repositories
 builder.Services.AddScoped<IRepository<User>, UserRepository>();
 builder.Services.AddScoped<IRepository<Role>, RoleRepository>();
 builder.Services.AddScoped<IRepository<Menu>, MenuRepository>();
 builder.Services.AddScoped<IRepository<UserRole>, UserRoleRepository>();
 builder.Services.AddScoped<IRepository<MenuRole>, MenuRoleRepository>();
+builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+builder.Services.AddScoped<IAttendanceLogRepository, AttendanceLogRepository>();
+builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+builder.Services.AddScoped<IShiftRepository, ShiftRepository>();
+builder.Services.AddScoped<IUserShiftRepository, UserShiftRepository>();
+builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+builder.Services.AddScoped<IAttendanceLogRepository, AttendanceLogRepository>();
+builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+builder.Services.AddScoped<IFaceDataRepository, FaceDataRepository>();
+
+// Register Services
 builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IMenuRoleService, MenuRoleService>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
+builder.Services.AddScoped<IShiftService, ShiftService>();
+builder.Services.AddScoped<IAttendanceLogService, AttendanceLogService>();
+builder.Services.AddScoped<IUserShiftService, UserShiftService>();
+builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+builder.Services.AddScoped<IAttendanceLogService, AttendanceLogService>();
+builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<IFaceDataService, FaceDataService>();
 
 // Register services
 builder.Services.AddScoped<IAuthService, AuthService>();
