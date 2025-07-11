@@ -38,6 +38,9 @@ builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 builder.Services.AddScoped<IAttendanceLogRepository, AttendanceLogRepository>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<IFaceDataRepository, FaceDataRepository>();
+builder.Services.AddScoped<IDiagnosisRepository, DiagnosisRepository>();
+builder.Services.AddScoped<IAllergyTypeRepository, AllergyTypeRepository>();
+builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 
 // Register Services
 builder.Services.AddScoped<IMenuService, MenuService>();
@@ -50,6 +53,9 @@ builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped<IAttendanceLogService, AttendanceLogService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IFaceDataService, FaceDataService>();
+builder.Services.AddScoped<IDiagnosisService, DiagnosisService>();
+builder.Services.AddScoped<IAllergyTypeService, AllergyTypeService>();
+builder.Services.AddScoped<IPatientService, PatientService>();
 
 // Register services
 builder.Services.AddScoped<IAuthService, AuthService>();

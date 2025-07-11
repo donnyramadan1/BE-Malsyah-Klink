@@ -171,6 +171,10 @@ namespace APIKlinik.Application.Profiles
             CreateMap<Diagnosis, DiagnosisDto>().ReverseMap();
             CreateMap<CreateDiagnosisDto, Diagnosis>();
             CreateMap<UpdateDiagnosisDto, Diagnosis>();
+
+            CreateMap<Patient, PatientDto>().ReverseMap();
+            CreateMap<CreatePatientDto, Patient>();
+            CreateMap<UpdatePatientDto, Patient>();
         }
     }
 }
