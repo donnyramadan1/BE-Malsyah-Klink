@@ -97,7 +97,7 @@ namespace APIKlinik.Application.Services
                     throw new ApplicationException("Relasi user-role tidak ditemukan.");
                 }
 
-                await _userRoleRepository.DeleteAsync(userRole.RoleId); // atau DeleteAsync(userRole)
+                await _userRoleRepository.DeleteEntityAsync(userRole); // atau DeleteAsync(userRole)
             }
             catch (Exception ex)
             {

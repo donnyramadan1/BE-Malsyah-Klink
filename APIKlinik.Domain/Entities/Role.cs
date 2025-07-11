@@ -12,7 +12,7 @@ namespace APIKlinik.Domain.Entities
         public string Name { get; set; }
         public string Description { get; set; }
    
-        public ICollection<UserRole> UserRoles { get; set; }
-        public ICollection<MenuRole> MenuRoles { get; set; }
+        public ICollection<UserRole>? UserRoles { get; set; }
+        public ICollection<MenuRole>? MenuRoles { get; set; }
     }
 }
