@@ -163,6 +163,14 @@ namespace APIKlinik.Application.Profiles
             CreateMap<FaceData, FaceDataDto>();
             CreateMap<CreateFaceDataDto, FaceData>();
             CreateMap<UpdateFaceDataDto, FaceData>();
+
+            CreateMap<AllergyType, AllergyTypeDto>().ReverseMap();
+            CreateMap<CreateAllergyTypeDto, AllergyType>();
+            CreateMap<UpdateAllergyTypeDto, AllergyType>();
+
+            CreateMap<Diagnosis, DiagnosisDto>().ReverseMap();
+            CreateMap<CreateDiagnosisDto, Diagnosis>();
+            CreateMap<UpdateDiagnosisDto, Diagnosis>();
         }
     }
 }
